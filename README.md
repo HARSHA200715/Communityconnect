@@ -1,2 +1,2 @@
-# HACKATHON
+# communityconnect
 About COMMUNITY CONNECT
