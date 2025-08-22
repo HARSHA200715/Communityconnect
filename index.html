@@ -1,0 +1,3448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Connect - Vijayawada</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .category-icon {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        
+        /* Custom Navigation Styles */
+        .navbar {
+            background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        /* Custom Button Styles */
+        .btn-primary {
+            background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #4338CA 0%, #6D28D9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        /* Custom Card Styles */
+        .service-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Product Card Styles */
+        .product-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image {
+            height: 150px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .product-description {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            height: 40px;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            color: #4F46E5;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .product-vendor {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .add-to-cart-btn {
+            background-color: #4F46E5;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .add-to-cart-btn:hover {
+            background-color: #4338CA;
+        }
+        
+        /* Vendor logo styling */
+        .vendor-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+        }
+        
+        /* Hero section */
+        .hero-section {
+            background: linear-gradient(rgba(79, 70, 229, 0.9), rgba(124, 58, 237, 0.9)), url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=2070') center/cover;
+            border-radius: 20px;
+        }
+        
+        /* Custom footer */
+        .footer {
+            background: linear-gradient(90deg, #1F2937 0%, #111827 100%);
+        }
+        
+        /* Verification section */
+        .verification-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .verification-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 5px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+        }
+        
+        .verification-input:focus {
+            border-color: #4F46E5;
+            outline: none;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4F46E5;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        /* Map container */
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        /* Location input */
+        .location-input {
+            position: relative;
+        }
+        
+        .location-input i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+        
+        .location-input input {
+            padding-left: 40px;
+        }
+        
+        /* Delivery time badge */
+        .delivery-time {
+            display: inline-block;
+            background-color: #10B981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        /* User profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #4F46E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #EF4444;
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Order status */
+        .order-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        
+        .status-preparing {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .status-delivering {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        
+        .status-completed {
+            background-color: #E5E7EB;
+            color: #4B5563;
+        }
+        
+        /* Cart styles */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .cart-sidebar.open {
+            right: 0;
+        }
+        
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .cart-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+            padding: 0 15px;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: #4F46E5;
+            font-weight: 600;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .quantity-btn:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+        
+        /* Login prompt overlay */
+        .login-prompt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-prompt-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        /* Section headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .view-all-btn {
+            color: #4F46E5;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .view-all-btn:hover {
+            color: #4338CA;
+        }
+        
+        /* Vendor card improvements */
+        .vendor-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .vendor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .vendor-image {
+            height: 150px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .vendor-info {
+            padding: 15px;
+        }
+        
+        .vendor-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .vendor-address {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .vendor-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .vendor-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #f59e0b;
+        }
+        
+        .view-vendor-btn {
+            background-color: #4F46E5;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .view-vendor-btn:hover {
+            background-color: #4338CA;
+        }
+        
+        /* Category section */
+        .category-section {
+            margin-bottom: 40px;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-icon-lg {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        
+        /* Featured vendors section */
+        .featured-vendors {
+            margin-bottom: 40px;
+        }
+        
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Location banner */
+        .location-banner {
+            background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .change-location-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .change-location-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Filter section */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-option {
+            background-color: #f3f4f6;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-option:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .filter-option.active {
+            background-color: #4F46E5;
+            color: white;
+        }
+        
+        /* Vendor details product grid */
+        .vendor-product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .vendor-product-card {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .vendor-product-card:hover {
+            background: #f3f4f6;
+            transform: translateY(-3px);
+        }
+        
+        .vendor-product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin: 0 auto 10px;
+        }
+        
+        .vendor-product-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .vendor-product-price {
+            color: #4F46E5;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .vendor-add-to-cart-btn {
+            background-color: #10B981;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .vendor-add-to-cart-btn:hover {
+            background-color: #059669;
+        }
+        
+        /* Search bar styles */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 50px;
+            border: 2px solid #e5e7eb;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #4F46E5;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .search-results.active {
+            display: block;
+        }
+        
+        .search-result-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-result-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .search-result-info {
+            flex: 1;
+        }
+        
+        .search-result-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .search-result-vendor {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        
+        .search-result-price {
+            font-weight: 600;
+            color: #4F46E5;
+        }
+        
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        /* Dashboard welcome section */
+        .dashboard-welcome {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-welcome h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-welcome p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Vendor category selection */
+        .vendor-category-selection {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .vendor-category-selection h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        
+        .vendor-category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .vendor-category-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .vendor-category-card:hover {
+            border-color: #4F46E5;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .vendor-category-card.selected {
+            border-color: #4F46E5;
+            background-color: #f0f4ff;
+        }
+        
+        .vendor-category-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+        
+        .vendor-category-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .vendor-category-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="navbar py-4 px-6 flex justify-between items-center text-white">
+        <div class="flex items-center">
+            <i class="fas fa-people-group text-white text-2xl mr-2"></i>
+            <span class="text-xl font-bold text-white">Community Connect</span>
+        </div>
+        
+        <div class="hidden md:flex space-x-6">
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Services</a>
+            <a href="#" class="nav-link">About</a>
+            <a href="#" class="nav-link">Contact</a>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search products, vendors..." id="global-search">
+                <i class="fas fa-search search-icon"></i>
+                <div class="search-results" id="search-results"></div>
+            </div>
+            <div class="cart-icon" onclick="toggleCart()">
+                <i class="fas fa-shopping-cart text-white text-xl"></i>
+                <span id="cart-count" class="notification-badge">0</span>
+            </div>
+            <div id="auth-buttons">
+                <button onclick="showLoginModal()" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium shadow-md hover:bg-gray-100">Login</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content Container -->
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Hero Section (Only shown when not logged in) -->
+        <div id="hero-section" class="hero-section text-white p-8 mb-12 rounded-2xl">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl font-bold mb-4">Connect with Local Businesses in Vijayawada</h1>
+                <p class="text-xl mb-6">Discover the best food, groceries, books, and home services in your community</p>
+                <button onclick="showSignupModal()" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold text-lg shadow-lg">Get Started</button>
+            </div>
+        </div>
+        
+        <!-- Location Banner (Only shown when not logged in) -->
+        <div id="location-banner" class="location-banner">
+            <div class="location-info">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Delivering to <span id="current-location">Benz Circle, Vijayawada</span></span>
+            </div>
+            <button class="change-location-btn" onclick="showLocationModal()">
+                Change Location <i class="fas fa-chevron-down ml-1"></i>
+            </button>
+        </div>
+        
+        <!-- Categories Section (Only shown when not logged in) -->
+        <div id="categories-section" class="category-section">
+            <div class="section-header">
+                <h2 class="section-title">Categories</h2>
+                <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="category-grid">
+                <div class="category-card" onclick="showLoginPrompt()">
+                    <div class="category-icon-lg bg-red-100 text-red-600">
+                        <i class="fas fa-utensils text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold">Food Delivery</h3>
+                    <p class="text-gray-600 text-sm mt-1">Restaurants & cafes</p>
+                </div>
+                <div class="category-card" onclick="showLoginPrompt()">
+                    <div class="category-icon-lg bg-green-100 text-green-600">
+                        <i class="fas fa-shopping-basket text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold">Grocery Stores</h3>
+                    <p class="text-gray-600 text-sm mt-1">Fresh groceries</p>
+                </div>
+                <div class="category-card" onclick="showLoginPrompt()">
+                    <div class="category-icon-lg bg-yellow-100 text-yellow-600">
+                        <i class="fas fa-book text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold">Bookstores</h3>
+                    <p class="text-gray-600 text-sm mt-1">Books & stationery</p>
+                </div>
+                <div class="category-card" onclick="showLoginPrompt()">
+                    <div class="category-icon-lg bg-blue-100 text-blue-600">
+                        <i class="fas fa-home text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold">Household Services</h3>
+                    <p class="text-gray-600 text-sm mt-1">Home services</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Featured Vendors Section (Only shown when not logged in) -->
+        <div id="featured-vendors-section" class="featured-vendors">
+            <div class="section-header">
+                <h2 class="section-title">Featured Vendors</h2>
+                <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="vendor-grid" id="featured-vendors">
+                <!-- Featured vendors will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- Popular Products Section (Only shown when not logged in) -->
+        <div id="popular-products-section" class="mb-12">
+            <div class="section-header">
+                <h2 class="section-title">Popular Products</h2>
+                <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="product-grid" id="popular-products">
+                <!-- Popular products will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- Authentication Section (Initially Hidden) -->
+        <div id="auth-section" class="fade-in hidden">
+            <!-- Login Form -->
+            <div id="login-form" class="bg-white p-8 rounded-xl shadow-lg max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Login to Your Account</h2>
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="email">Email</label>
+                        <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="password">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your password">
+                    </div>
+                    <button type="button" onclick="login()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none">
+                        Login
+                    </button>
+                </form>
+                <p class="text-center mt-4 text-gray-600">
+                    Don't have an account? 
+                    <button onclick="showSignup()" class="text-blue-600 hover:text-blue-800 font-medium">Sign up</button>
+                </p>
+            </div>
+            <!-- Signup Form (Initially Hidden) -->
+            <div id="signup-form" class="bg-white p-8 rounded-xl shadow-lg max-w-md mx-auto hidden">
+                <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Create an Account</h2>
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Create a password">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-medium mb-2" for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirm your password">
+                    </div>
+                    <button type="button" onclick="signup()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none">
+                        Sign Up
+                    </button>
+                </form>
+                <p class="text-center mt-4 text-gray-600">
+                    Already have an account? 
+                    <button onclick="showLogin()" class="text-blue-600 hover:text-blue-800 font-medium">Login</button>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Email Verification Section (Initially Hidden) -->
+        <div id="verification-section" class="hidden fade-in">
+            <div class="bg-white p-8 rounded-xl shadow-lg verification-container">
+                <h2 class="text-2xl font-bold text-center mb-2 text-gray-800">Verify Your Email</h2>
+                <p class="text-center text-gray-600 mb-6">We've sent a verification code to your email</p>
+                
+                <div class="flex justify-center mb-6">
+                    <input type="text" class="verification-input" maxlength="1" oninput="moveToNext(this)">
+                    <input type="text" class="verification-input" maxlength="1" oninput="moveToNext(this)">
+                    <input type="text" class="verification-input" maxlength="1" oninput="moveToNext(this)">
+                    <input type="text" class="verification-input" maxlength="1" oninput="moveToNext(this)">
+                    <input type="text" class="verification-input" maxlength="1" oninput="moveToNext(this)">
+                    <input type="text" class="verification-input" maxlength="1" oninput="moveToNext(this)">
+                </div>
+                
+                <div id="verification-error" class="text-red-500 text-center mb-4 hidden">
+                    Invalid verification code. Please try again.
+                </div>
+                
+                <button onclick="verifyEmail()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg mb-4">
+                    Verify Email
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-gray-600 mb-2">Didn't receive the code?</p>
+                    <button onclick="resendCode()" class="text-blue-600 hover:text-blue-800 font-medium" id="resend-button">
+                        Resend Code
+                    </button>
+                    <span id="countdown" class="text-gray-500 ml-2"></span>
+                </div>
+                
+                <div id="verification-success" class="hidden mt-6 text-center">
+                    <div class="spinner mb-3"></div>
+                    <p class="text-green-600 font-medium">Verifying your code...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Role Selection Section (Initially Hidden) -->
+        <div id="role-section" class="hidden fade-in">
+            <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-center mb-8 text-gray-800">Select Your Role</h2>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-1 text-center p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 cursor-pointer card-hover" onclick="selectRole('customer')">
+                        <div class="category-icon bg-blue-100 text-blue-600">
+                            <i class="fas fa-user text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Customer</h3>
+                        <p class="text-gray-600">Browse and order from various services</p>
+                        <button class="mt-4 btn-primary text-white px-6 py-2 rounded-lg font-medium">
+                            Select <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 text-center p-6 border-2 border-gray-200 rounded-xl hover:border-green-500 cursor-pointer card-hover" onclick="selectRole('vendor')">
+                        <div class="category-icon bg-green-100 text-green-600">
+                            <i class="fas fa-store text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Vendor</h3>
+                        <p class="text-gray-600">Manage your business and listings</p>
+                        <button class="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium">
+                            Select <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Customer Dashboard (Initially Hidden) -->
+        <div id="customer-dashboard" class="hidden fade-in">
+            <!-- Welcome Section -->
+            <div class="dashboard-welcome">
+                <h2>Welcome, <span id="user-name">User</span>!</h2>
+                <p>What would you like to explore today?</p>
+            </div>
+            
+            <!-- Location Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h3 class="text-lg font-semibold mb-4">Your Location</h3>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 location-input">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="user-location" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your location">
+                    </div>
+                    <button onclick="detectUserLocation()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                        <i class="fas fa-location-arrow mr-2"></i> Use Current Location
+                    </button>
+                </div>
+                <div id="map" class="hidden"></div>
+            </div>
+            
+            <!-- Categories Section -->
+            <div class="category-section mb-8">
+                <div class="section-header">
+                    <h2 class="section-title">Categories</h2>
+                    <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="category-grid">
+                    <div class="category-card" onclick="showCategory('food')">
+                        <div class="category-icon-lg bg-red-100 text-red-600">
+                            <i class="fas fa-utensils text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">Food Delivery</h3>
+                        <p class="text-gray-600 text-sm mt-1">Restaurants & cafes</p>
+                    </div>
+                    <div class="category-card" onclick="showCategory('grocery')">
+                        <div class="category-icon-lg bg-green-100 text-green-600">
+                            <i class="fas fa-shopping-basket text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">Grocery Stores</h3>
+                        <p class="text-gray-600 text-sm mt-1">Fresh groceries</p>
+                    </div>
+                    <div class="category-card" onclick="showCategory('books')">
+                        <div class="category-icon-lg bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-book text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">Bookstores</h3>
+                        <p class="text-gray-600 text-sm mt-1">Books & stationery</p>
+                    </div>
+                    <div class="category-card" onclick="showCategory('services')">
+                        <div class="category-icon-lg bg-blue-100 text-blue-600">
+                            <i class="fas fa-home text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">Household Services</h3>
+                        <p class="text-gray-600 text-sm mt-1">Home services</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Featured Vendors Section -->
+            <div class="featured-vendors mb-8">
+                <div class="section-header">
+                    <h2 class="section-title">Featured Vendors</h2>
+                    <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="vendor-grid" id="customer-featured-vendors">
+                    <!-- Featured vendors will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Popular Products Section -->
+            <div class="mb-12">
+                <div class="section-header">
+                    <h2 class="section-title">Popular Products</h2>
+                    <a href="#" class="view-all-btn">View All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="product-grid" id="customer-popular-products">
+                    <!-- Popular products will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Recent Orders Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h3 class="text-xl font-semibold mb-4">Recent Orders</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Time</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap">#ORD-12345</td>
+                                <td class="px-4 py-3 whitespace-nowrap">Hotel Green Park</td>
+                                <td class="px-4 py-3">Veg Biryani, Paneer Butter Masala</td>
+                                <td class="px-4 py-3 whitespace-nowrap"><span class="order-status status-delivering">Delivering</span></td>
+                                <td class="px-4 py-3 whitespace-nowrap">25 mins</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap">#ORD-12346</td>
+                                <td class="px-4 py-3 whitespace-nowrap">More Supermarket</td>
+                                <td class="px-4 py-3">Organic Fruits, Fresh Vegetables</td>
+                                <td class="px-4 py-3 whitespace-nowrap"><span class="order-status status-completed">Completed</span></td>
+                                <td class="px-4 py-3 whitespace-nowrap">Delivered</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 whitespace-nowrap">#ORD-12347</td>
+                                <td class="px-4 py-3 whitespace-nowrap">Sri Book Depot</td>
+                                <td class="px-4 py-3">Academic Books, Stationery</td>
+                                <td class="px-4 py-3 whitespace-nowrap"><span class="order-status status-preparing">Preparing</span></td>
+                                <td class="px-4 py-3 whitespace-nowrap">45 mins</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vendor Dashboard (Initially Hidden) -->
+        <div id="vendor-dashboard" class="hidden fade-in">
+            <!-- Welcome Section -->
+            <div class="dashboard-welcome">
+                <h2>Welcome, <span id="vendor-name">Vendor</span>!</h2>
+                <p>Manage your business and connect with customers</p>
+            </div>
+            
+            <!-- Vendor Category Selection -->
+            <div class="vendor-category-selection">
+                <h3>Select Your Business Category</h3>
+                <div class="vendor-category-grid">
+                    <div class="vendor-category-card" onclick="selectVendorCategory('food')">
+                        <div class="vendor-category-icon bg-red-100 text-red-600">
+                            <i class="fas fa-utensils text-2xl"></i>
+                        </div>
+                        <div class="vendor-category-name">Food</div>
+                        <div class="vendor-category-desc">Restaurants, cafes, food delivery</div>
+                    </div>
+                    <div class="vendor-category-card" onclick="selectVendorCategory('grocery')">
+                        <div class="vendor-category-icon bg-green-100 text-green-600">
+                            <i class="fas fa-shopping-basket text-2xl"></i>
+                        </div>
+                        <div class="vendor-category-name">Grocery</div>
+                        <div class="vendor-category-desc">Supermarkets, organic stores</div>
+                    </div>
+                    <div class="vendor-category-card" onclick="selectVendorCategory('books')">
+                        <div class="vendor-category-icon bg-yellow-100 text-yellow-600">
+                            <i class="fas fa-book text-2xl"></i>
+                        </div>
+                        <div class="vendor-category-name">Books</div>
+                        <div class="vendor-category-desc">Bookstores, stationery shops</div>
+                    </div>
+                    <div class="vendor-category-card" onclick="selectVendorCategory('services')">
+                        <div class="vendor-category-icon bg-blue-100 text-blue-600">
+                            <i class="fas fa-home text-2xl"></i>
+                        </div>
+                        <div class="vendor-category-name">Services</div>
+                        <div class="vendor-category-desc">Home services, repairs</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vendor Location Section -->
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                <h3 class="text-lg font-semibold mb-4">Your Business Location</h3>
+                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div class="flex-1 location-input">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="vendor-location" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your business address">
+                    </div>
+                    <button onclick="setVendorLocation()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium">
+                        <i class="fas fa-check mr-2"></i> Set Location
+                    </button>
+                </div>
+                <div id="vendor-map" class="hidden"></div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-lg font-semibold mb-4">Manage Your Listings</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-4 rounded-lg shadow">
+                        <h4 class="font-medium mb-2">Add New Item</h4>
+                        <p class="text-gray-600 text-sm mb-3">Create new listings for your business</p>
+                        <button onclick="showAddItemModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+                            Add Item <i class="fas fa-plus ml-1"></i>
+                        </button>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg shadow">
+                        <h4 class="font-medium mb-2">View Analytics</h4>
+                        <p class="text-gray-600 text-sm mb-3">Track your business performance</p>
+                        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                            View Stats <i class="fas fa-chart-bar ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Category Content (Initially Hidden) -->
+        <div id="category-content" class="hidden fade-in">
+            <div class="flex items-center mb-6">
+                <button onclick="hideCategory()" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+                </button>
+                <h2 class="text-2xl font-bold text-gray-800 ml-4" id="category-title">Category Title</h2>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="text" id="category-search" onkeyup="searchCategoryProducts()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search products in this category...">
+                    <button class="absolute right-2 top-2 text-gray-500">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-section mb-6">
+                <h3 class="filter-title">Filter By Vendor</h3>
+                <div class="filter-options" id="vendor-filters">
+                    <!-- Vendor filters will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <div class="product-grid" id="category-products">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer text-white py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Community Connect</h3>
+                    <p class="text-gray-400">Connecting local businesses with their communities through innovative technology.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Services</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Food Delivery</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Grocery Stores</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Bookstores</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Household Services</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2023 Community Connect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3 class="text-xl font-semibold">Your Cart</h3>
+            <button onclick="toggleCart()" class="close-modal">&times;</button>
+        </div>
+        <div id="cart-items">
+            <!-- Cart items will be dynamically inserted here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">₹0.00</span>
+            </div>
+            <button onclick="checkout()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none">
+                Checkout
+            </button>
+        </div>
+    </div>
+    
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-semibold">Login to Your Account</h3>
+                <span class="close-modal" onclick="closeModal('login-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="modal-email">Email</label>
+                    <input type="email" id="modal-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="modal-password">Password</label>
+                    <input type="password" id="modal-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your password">
+                </div>
+                <div class="mb-4">
+                    <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">Forgot password?</a>
+                </div>
+                <button onclick="modalLogin()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none mb-4">
+                    Login
+                </button>
+                <div class="text-center">
+                    <p class="text-gray-600">Don't have an account? 
+                        <button onclick="switchToSignup()" class="text-blue-600 hover:text-blue-800 font-medium">Sign up</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-semibold">Create an Account</h3>
+                <span class="close-modal" onclick="closeModal('signup-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="modal-signup-email">Email</label>
+                    <input type="email" id="modal-signup-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your email">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="modal-signup-password">Password</label>
+                    <input type="password" id="modal-signup-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Create a password">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="modal-confirm-password">Confirm Password</label>
+                    <input type="password" id="modal-confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Confirm your password">
+                </div>
+                <button onclick="modalSignup()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none mb-4">
+                    Sign Up
+                </button>
+                <div class="text-center">
+                    <p class="text-gray-600">Already have an account? 
+                        <button onclick="switchToLogin()" class="text-blue-600 hover:text-blue-800 font-medium">Login</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Item Modal -->
+    <div id="add-item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-semibold">Add New Item</h3>
+                <span class="close-modal" onclick="closeModal('add-item-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="item-name">Item Name</label>
+                    <input type="text" id="item-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter item name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="item-price">Price</label>
+                    <input type="number" id="item-price" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter price">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="item-description">Description</label>
+                    <textarea id="item-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter item description"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="item-image">Image URL</label>
+                    <input type="text" id="item-image" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter image URL">
+                </div>
+                <button onclick="addItem()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none">
+                    Add Item
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vendor Details Modal -->
+    <div id="vendor-details-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 class="text-xl font-semibold" id="vendor-details-title">Vendor Details</h3>
+                <span class="close-modal" onclick="closeModal('vendor-details-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/3">
+                        <img id="vendor-details-image" src="" alt="Vendor" class="w-full h-48 object-cover rounded-lg mb-4">
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Contact Information</h4>
+                            <p class="text-gray-600 mb-1"><i class="fas fa-phone mr-2"></i> <span id="vendor-details-phone"></span></p>
+                            <p class="text-gray-600"><i class="fas fa-envelope mr-2"></i> <span id="vendor-details-email"></span></p>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Business Hours</h4>
+                            <p class="text-gray-600">Mon-Fri: 9:00 AM - 8:00 PM</p>
+                            <p class="text-gray-600">Sat-Sun: 10:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3">
+                        <h4 class="font-semibold mb-2">Location</h4>
+                        <div id="vendor-details-map" style="height: 200px; width: 100%; border-radius: 10px; margin-bottom: 15px;"></div>
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <p class="text-gray-600"><i class="fas fa-map-marker-alt mr-2"></i> <span id="vendor-details-address"></span></p>
+                                <p class="text-gray-600"><i class="fas fa-clock mr-2"></i> <span id="vendor-details-distance"></span> away</p>
+                            </div>
+                            <div>
+                                <span class="delivery-time"><i class="fas fa-truck mr-1"></i> <span id="vendor-details-delivery-time"></span></span>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <h4 class="font-semibold mb-2">Products</h4>
+                            <div class="vendor-product-grid" id="vendor-details-products">
+                                <!-- Products will be dynamically inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Location Modal -->
+    <div id="location-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-semibold">Select Your Location</h3>
+                <span class="close-modal" onclick="closeModal('location-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2" for="location-input">Enter your location</label>
+                    <div class="location-input">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="location-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your location">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <p class="text-gray-600 mb-2">Or select from popular locations:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectLocation('Benz Circle, Vijayawada')" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-left">Benz Circle</button>
+                        <button onclick="selectLocation('M G Road, Vijayawada')" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-left">M G Road</button>
+                        <button onclick="selectLocation('Eluru Road, Vijayawada')" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-left">Eluru Road</button>
+                        <button onclick="selectLocation('Governorpet, Vijayawada')" class="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg text-left">Governorpet</button>
+                    </div>
+                </div>
+                <button onclick="saveLocation()" class="w-full btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none">
+                    Save Location
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Login Prompt -->
+    <div id="login-prompt" class="login-prompt">
+        <div class="login-prompt-content">
+            <i class="fas fa-lock text-4xl text-indigo-600 mb-4"></i>
+            <h3 class="text-xl font-semibold mb-2">Login Required</h3>
+            <p class="text-gray-600 mb-6">Please login to add items to your cart and place orders.</p>
+            <div class="flex flex-col gap-3">
+                <button onclick="showLoginModal(); hideLoginPrompt();" class="btn-primary text-white font-medium py-2 px-4 rounded-lg focus:outline-none">
+                    Login
+                </button>
+                <button onclick="hideLoginPrompt();" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg focus:outline-none">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // DOM Elements
+        const authSection = document.getElementById('auth-section');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+        const verificationSection = document.getElementById('verification-section');
+        const roleSection = document.getElementById('role-section');
+        const customerDashboard = document.getElementById('customer-dashboard');
+        const vendorDashboard = document.getElementById('vendor-dashboard');
+        const categoryContent = document.getElementById('category-content');
+        const categoryTitle = document.getElementById('category-title');
+        const categoryProducts = document.getElementById('category-products');
+        const vendorFilters = document.getElementById('vendor-filters');
+        const authButtons = document.getElementById('auth-buttons');
+        const verificationError = document.getElementById('verification-error');
+        const verificationSuccess = document.getElementById('verification-success');
+        const resendButton = document.getElementById('resend-button');
+        const countdownElement = document.getElementById('countdown');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const cartCount = document.getElementById('cart-count');
+        const featuredVendors = document.getElementById('featured-vendors');
+        const popularProducts = document.getElementById('popular-products');
+        const customerFeaturedVendors = document.getElementById('customer-featured-vendors');
+        const customerPopularProducts = document.getElementById('customer-popular-products');
+        const currentLocation = document.getElementById('current-location');
+        const loginPrompt = document.getElementById('login-prompt');
+        const globalSearch = document.getElementById('global-search');
+        const searchResults = document.getElementById('search-results');
+        const categorySearch = document.getElementById('category-search');
+        const heroSection = document.getElementById('hero-section');
+        const locationBanner = document.getElementById('location-banner');
+        const categoriesSection = document.getElementById('categories-section');
+        const featuredVendorsSection = document.getElementById('featured-vendors-section');
+        const popularProductsSection = document.getElementById('popular-products-section');
+        const userName = document.getElementById('user-name');
+        const vendorName = document.getElementById('vendor-name');
+        
+        // User and vendor data
+        let currentUser = null;
+        let currentVendor = null;
+        let userLocation = { lat: 16.5062, lng: 80.6480, address: 'Benz Circle, Vijayawada' }; // Default to Benz Circle, Vijayawada
+        let vendorLocation = null;
+        let map = null;
+        let vendorMap = null;
+        let vendorDetailsMap = null;
+        
+        // Cart data
+        let cart = [];
+        
+        // Store the verification code for comparison
+        let verificationCode = '';
+        let countdownInterval;
+        
+        // Active filters
+        let activeFilters = {
+            category: null,
+            vendors: []
+        };
+        
+        // Current search term
+        let currentSearchTerm = '';
+        
+        // Vijayawada vendor data with detailed products and improved images
+        const vijayawadaVendors = {
+            food: [
+                { 
+                    name: 'Hotel Green Park', 
+                    items: [
+                        { name: 'Veg Biryani', price: 180, description: 'Fragrant basmati rice cooked with mixed vegetables and spices', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Paneer Butter Masala', price: 220, description: 'Soft cottage cheese cubes in creamy tomato-based gravy', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Chicken Curry', price: 250, description: 'Tender chicken pieces in spicy onion-tomato gravy', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fish Fry', price: 280, description: 'Fresh fish marinated in spices and fried to perfection', image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Andhra Meals', price: 150, description: 'Traditional Andhra thali with variety of dishes', image: 'https://images.unsplash.com/photo-1634168890823-704fed6432a7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Chicken 65', price: 200, description: 'Spicy deep-fried chicken chunks with Andhra flavors', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Prawns Fry', price: 300, description: 'Fresh prawns marinated in spices and shallow fried', image: 'https://images.unsplash.com/photo-1626097194453-770d8e9e4390?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Mutton Biryani', price: 320, description: 'Aromatic basmati rice with tender mutton pieces', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-utensils',
+                    color: 'red',
+                    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 244 4444',
+                    email: 'contact@greenparkvijayawada.com',
+                    address: 'M G Road, Vijayawada',
+                    lat: 16.5153,
+                    lng: 80.6309,
+                    rating: 4.5
+                },
+                { 
+                    name: 'Vaibhav Restaurant', 
+                    items: [
+                        { name: 'Andhra Meals', price: 150, description: 'Traditional Andhra thali with variety of dishes', image: 'https://images.unsplash.com/photo-1634168890823-704fed6432a7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Chicken 65', price: 200, description: 'Spicy deep-fried chicken chunks with Andhra flavors', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Prawns Fry', price: 300, description: 'Fresh prawns marinated in spices and shallow fried', image: 'https://images.unsplash.com/photo-1626097194453-770d8e9e4390?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Mutton Biryani', price: 320, description: 'Aromatic basmati rice with tender mutton pieces', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Veg Biryani', price: 180, description: 'Fragrant basmati rice cooked with mixed vegetables and spices', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Paneer Butter Masala', price: 220, description: 'Soft cottage cheese cubes in creamy tomato-based gravy', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Chicken Curry', price: 250, description: 'Tender chicken pieces in spicy onion-tomato gravy', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fish Fry', price: 280, description: 'Fresh fish marinated in spices and fried to perfection', image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-utensils',
+                    color: 'orange',
+                    image: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 257 8888',
+                    email: 'contact@vaibhavrestaurant.com',
+                    address: 'Benz Circle, Vijayawada',
+                    lat: 16.5062,
+                    lng: 80.6480,
+                    rating: 4.3
+                },
+                { 
+                    name: 'Southern Spice', 
+                    items: [
+                        { name: 'Dosa', price: 80, description: 'Crispy rice and lentil crepe served with chutney and sambar', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Idli', price: 60, description: 'Soft steamed rice and lentil cakes served with chutney and sambar', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Vada', price: 40, description: 'Crispy lentil doughnuts served with chutney and sambar', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Poori', price: 50, description: 'Deep-fried bread served with potato curry and chutney', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Upma', price: 70, description: 'Savory semolina porridge with vegetables and spices', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Pongal', price: 75, description: 'Rice and lentil porridge with ghee and cashews', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bisi Bele Bath', price: 90, description: 'Spicy rice and lentil dish with vegetables', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Tomato Bath', price: 85, description: 'Flavorful rice cooked with tomatoes and spices', image: 'https://images.unsplash.com/photo-1589302168068-9646047b63c0?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-utensils',
+                    color: 'yellow',
+                    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 248 9999',
+                    email: 'contact@southernspice.com',
+                    address: 'Eluru Road, Vijayawada',
+                    lat: 16.5123,
+                    lng: 80.6296,
+                    rating: 4.2
+                },
+                { 
+                    name: 'Barbeque Nation', 
+                    items: [
+                        { name: 'Buffet', price: 699, description: 'Unlimited buffet with live grills and desserts', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Grilled Chicken', price: 350, description: 'Tender chicken marinated in spices and grilled to perfection', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Tandoori Paneer', price: 280, description: 'Cottage cheese marinated in yogurt and spices, grilled in tandoor', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fish Tikka', price: 380, description: 'Fish cubes marinated in spices and grilled in tandoor', image: 'https://images.unsplash.com/photo-1626097194453-770d8e9e4390?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Mutton Seekh Kebab', price: 420, description: 'Minced mutton skewers grilled with spices', image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Prawn Koliwada', price: 450, description: 'Prawns marinated in spices and deep-fried', image: 'https://images.unsplash.com/photo-1626097194453-770d8e9e4390?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Veg Platter', price: 320, description: 'Assortment of grilled vegetables and paneer', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Dessert Platter', price: 250, description: 'Selection of Indian sweets and ice creams', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-fire',
+                    color: 'red',
+                    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=2080',
+                    phone: '+91 866 669 0000',
+                    email: 'contact@barbequenation.com',
+                    address: 'Governorpet, Vijayawada',
+                    lat: 16.5185,
+                    lng: 80.6197,
+                    rating: 4.7
+                }
+            ],
+            grocery: [
+                { 
+                    name: 'More Supermarket', 
+                    items: [
+                        { name: 'Organic Fruits', price: 120, description: 'Fresh and organic fruits sourced directly from farms', image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fresh Vegetables', price: 80, description: 'Farm-fresh vegetables picked daily', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Dairy Products', price: 60, description: 'Milk, curd, paneer, and other dairy essentials', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bakery Items', price: 50, description: 'Fresh bread, cakes, and pastries', image: 'https://images.unsplash.com/photo-1509440159572-84d5001f1ad5?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Rice & Grains', price: 100, description: 'Premium quality rice and grains', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Cooking Oil', price: 150, description: 'Various cooking oils for healthy cooking', image: 'https://images.unsplash.com/photo-1474982771330-d6c1ceb8c635?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Spices', price: 70, description: 'Aromatic spices for flavorful cooking', image: 'https://images.unsplash.com/photo-1601996712755-7806a0e8a4d9?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Cleaning Supplies', price: 90, description: 'Household cleaning products for a clean home', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-shopping-basket',
+                    color: 'green',
+                    image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 666 3333',
+                    email: 'contact@moresupermarket.com',
+                    address: 'Benz Circle, Vijayawada',
+                    lat: 16.5062,
+                    lng: 80.6480,
+                    rating: 4.4
+                },
+                { 
+                    name: 'Reliance Fresh', 
+                    items: [
+                        { name: 'Rice & Grains', price: 100, description: 'Premium quality rice and grains', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Cooking Oil', price: 150, description: 'Various cooking oils for healthy cooking', image: 'https://images.unsplash.com/photo-1474982771330-d6c1ceb8c635?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Spices', price: 70, description: 'Aromatic spices for flavorful cooking', image: 'https://images.unsplash.com/photo-1601996712755-7806a0e8a4d9?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Cleaning Supplies', price: 90, description: 'Household cleaning products for a clean home', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Organic Fruits', price: 120, description: 'Fresh and organic fruits sourced directly from farms', image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fresh Vegetables', price: 80, description: 'Farm-fresh vegetables picked daily', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Dairy Products', price: 60, description: 'Milk, curd, paneer, and other dairy essentials', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bakery Items', price: 50, description: 'Fresh bread, cakes, and pastries', image: 'https://images.unsplash.com/photo-1509440159572-84d5001f1ad5?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-store',
+                    color: 'blue',
+                    image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 669 9999',
+                    email: 'contact@reliancefresh.com',
+                    address: 'M G Road, Vijayawada',
+                    lat: 16.5153,
+                    lng: 80.6309,
+                    rating: 4.3
+                },
+                { 
+                    name: 'Heritage Fresh', 
+                    items: [
+                        { name: 'Organic Vegetables', price: 90, description: 'Certified organic vegetables grown without pesticides', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Natural Honey', price: 250, description: 'Pure and natural honey from local beekeepers', image: 'https://images.unsplash.com/photo-1587047781475-87e6e46e8a1a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Whole Grains', price: 110, description: 'Nutritious whole grains for a healthy diet', image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Herbal Products', price: 180, description: 'Natural herbal products for wellness', image: 'https://images.unsplash.com/photo-1590596485566-6a60f1b9e9dc?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Organic Fruits', price: 120, description: 'Fresh and organic fruits sourced directly from farms', image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fresh Vegetables', price: 80, description: 'Farm-fresh vegetables picked daily', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Dairy Products', price: 60, description: 'Milk, curd, paneer, and other dairy essentials', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bakery Items', price: 50, description: 'Fresh bread, cakes, and pastries', image: 'https://images.unsplash.com/photo-1509440159572-84d5001f1ad5?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-seedling',
+                    color: 'emerald',
+                    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 248 7777',
+                    email: 'contact@heritagefresh.com',
+                    address: 'Eluru Road, Vijayawada',
+                    lat: 16.5123,
+                    lng: 80.6296,
+                    rating: 4.5
+                },
+                { 
+                    name: 'Spencers', 
+                    items: [
+                        { name: 'Canned Goods', price: 120, description: 'Variety of canned foods for your pantry', image: 'https://images.unsplash.com/photo-1592830004238-1dab4a70d0d2?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Frozen Foods', price: 150, description: 'Frozen vegetables, fruits, and ready-to-cook meals', image: 'https://images.unsplash.com/photo-1586962356134-5faccd6a9e6d?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Snacks', price: 80, description: 'Assorted snacks for your cravings', image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Beverages', price: 60, description: 'Soft drinks, juices, and other beverages', image: 'https://images.unsplash.com/photo-1622597467836-f3c0ca8ac9e5?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Organic Fruits', price: 120, description: 'Fresh and organic fruits sourced directly from farms', image: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fresh Vegetables', price: 80, description: 'Farm-fresh vegetables picked daily', image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Dairy Products', price: 60, description: 'Milk, curd, paneer, and other dairy essentials', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bakery Items', price: 50, description: 'Fresh bread, cakes, and pastries', image: 'https://images.unsplash.com/photo-1509440159572-84d5001f1ad5?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-tag',
+                    color: 'red',
+                    image: 'https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&q=80&w=2115',
+                    phone: '+91 866 666 2222',
+                    email: 'contact@spencers.com',
+                    address: 'Governorpet, Vijayawada',
+                    lat: 16.5185,
+                    lng: 80.6197,
+                    rating: 4.2
+                }
+            ],
+            books: [
+                { 
+                    name: 'Sri Book Depot', 
+                    items: [
+                        { name: 'Academic Books', price: 300, description: 'Textbooks for schools and colleges', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Reference Books', price: 450, description: 'Reference materials for research and study', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Exam Prep', price: 250, description: 'Books for competitive exam preparation', image: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Children\'s Books', price: 150, description: 'Storybooks and educational books for children', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fiction', price: 250, description: 'Novels and storybooks from various genres', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Non-Fiction', price: 350, description: 'Books on history, science, and other factual topics', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Magazines', price: 100, description: 'Latest magazines on various topics', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Journals', price: 200, description: 'Academic and professional journals', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-book',
+                    color: 'blue',
+                    image: 'https://images.unsplash.com/photo-1533826418470-0cef7eb8bd4c?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 244 1111',
+                    email: 'contact@sribookdepot.com',
+                    address: 'M G Road, Vijayawada',
+                    lat: 16.5153,
+                    lng: 80.6309,
+                    rating: 4.6
+                },
+                { 
+                    name: 'Higginbothams', 
+                    items: [
+                        { name: 'Fiction', price: 250, description: 'Novels and storybooks from various genres', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Non-Fiction', price: 350, description: 'Books on history, science, and other factual topics', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Magazines', price: 100, description: 'Latest magazines on various topics', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Journals', price: 200, description: 'Academic and professional journals', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Academic Books', price: 300, description: 'Textbooks for schools and colleges', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Reference Books', price: 450, description: 'Reference materials for research and study', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Exam Prep', price: 250, description: 'Books for competitive exam preparation', image: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Children\'s Books', price: 150, description: 'Storybooks and educational books for children', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-book-open',
+                    color: 'purple',
+                    image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=2128',
+                    phone: '+91 866 666 5555',
+                    email: 'contact@higginbothams.com',
+                    address: 'Benz Circle, Vijayawada',
+                    lat: 16.5062,
+                    lng: 80.6480,
+                    rating: 4.7
+                },
+                { 
+                    name: 'Student Book World', 
+                    items: [
+                        { name: 'Textbooks', price: 400, description: 'Textbooks for various educational levels', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Research Papers', price: 500, description: 'Academic research papers and publications', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Stationery', price: 100, description: 'Pens, pencils, notebooks, and other stationery items', image: 'https://images.unsplash.com/photo-1587486917339-302096eb7ae1?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Art Supplies', price: 200, description: 'Colors, brushes, and other art materials', image: 'https://images.unsplash.com/photo-1513530534585-c7b1214ad121?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fiction', price: 250, description: 'Novels and storybooks from various genres', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Non-Fiction', price: 350, description: 'Books on history, science, and other factual topics', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Magazines', price: 100, description: 'Latest magazines on various topics', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Journals', price: 200, description: 'Academic and professional journals', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-graduation-cap',
+                    color: 'indigo',
+                    image: 'https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&q=80&w=2122',
+                    phone: '+91 866 248 3333',
+                    email: 'contact@studentbookworld.com',
+                    address: 'Eluru Road, Vijayawada',
+                    lat: 16.5123,
+                    lng: 80.6296,
+                    rating: 4.4
+                },
+                { 
+                    name: 'Crossword', 
+                    items: [
+                        { name: 'Bestsellers', price: 300, description: 'Popular and bestselling books', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Audiobooks', price: 400, description: 'Books in audio format for listening on the go', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'eBooks', price: 250, description: 'Digital books for e-readers and devices', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Book Accessories', price: 150, description: 'Bookmarks, covers, and other book accessories', image: 'https://images.unsplash.com/photo-1587486917339-302096eb7ae1?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fiction', price: 250, description: 'Novels and storybooks from various genres', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Non-Fiction', price: 350, description: 'Books on history, science, and other factual topics', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Magazines', price: 100, description: 'Latest magazines on various topics', image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Journals', price: 200, description: 'Academic and professional journals', image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-city',
+                    color: 'teal',
+                    image: 'https://images.unsplash.com/photo-1535905557550-3158c6b3f8e8?auto=format&fit=crop&q=80&w=2069',
+                    phone: '+91 866 669 4444',
+                    email: 'contact@crossword.com',
+                    address: 'Governorpet, Vijayawada',
+                    lat: 16.5185,
+                    lng: 80.6197,
+                    rating: 4.5
+                }
+            ],
+            services: [
+                { 
+                    name: 'Urban Company', 
+                    items: [
+                        { name: 'House Cleaning', price: 500, description: 'Professional house cleaning services', image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Office Cleaning', price: 1000, description: 'Complete office cleaning and sanitization', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Carpet Cleaning', price: 800, description: 'Deep cleaning for carpets and rugs', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Window Cleaning', price: 600, description: 'Professional window cleaning services', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bathroom Cleaning', price: 700, description: 'Thorough bathroom cleaning and sanitization', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Kitchen Cleaning', price: 800, description: 'Complete kitchen cleaning services', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Sofa Cleaning', price: 900, description: 'Professional sofa and upholstery cleaning', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Pest Control', price: 1200, description: 'Effective pest control solutions', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-broom',
+                    color: 'blue',
+                    image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 666 7777',
+                    email: 'contact@urbancompany.com',
+                    address: 'M G Road, Vijayawada',
+                    lat: 16.5153,
+                    lng: 80.6309,
+                    rating: 4.8
+                },
+                { 
+                    name: 'Mr. Right', 
+                    items: [
+                        { name: 'Tap Fixing', price: 300, description: 'Repair and installation of taps and faucets', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Pipe Installation', price: 800, description: 'New pipe installation and replacement', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Leakage Repair', price: 500, description: 'Fixing water leakages in pipes and tanks', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Water Motor Fix', price: 600, description: 'Repair and maintenance of water motors', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Bathroom Fittings', price: 700, description: 'Installation of bathroom fittings and fixtures', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Kitchen Sink Repair', price: 400, description: 'Repair and replacement of kitchen sinks', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Geyser Repair', price: 500, description: 'Repair and maintenance of geysers', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Drain Cleaning', price: 350, description: 'Clearing blocked drains and pipes', image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-faucet',
+                    color: 'teal',
+                    image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 244 6666',
+                    email: 'contact@mrright.com',
+                    address: 'Benz Circle, Vijayawada',
+                    lat: 16.5062,
+                    lng: 80.6480,
+                    rating: 4.5
+                },
+                { 
+                    name: 'Electrician Vijayawada', 
+                    items: [
+                        { name: 'Wiring', price: 1000, description: 'Complete electrical wiring for homes and offices', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Light Installation', price: 400, description: 'Installation of lights and lighting fixtures', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Switch Repair', price: 200, description: 'Repair and replacement of electrical switches', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Appliance Fixing', price: 500, description: 'Repair of electrical appliances', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Fan Installation', price: 300, description: 'Installation of ceiling and table fans', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'AC Repair', price: 800, description: 'Repair and maintenance of air conditioners', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Inverter Installation', price: 1200, description: 'Installation of inverters and UPS systems', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Generator Repair', price: 1500, description: 'Repair and maintenance of generators', image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-bolt',
+                    color: 'yellow',
+                    image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=2070',
+                    phone: '+91 866 666 8888',
+                    email: 'contact@electricianvijayawada.com',
+                    address: 'Eluru Road, Vijayawada',
+                    lat: 16.5123,
+                    lng: 80.6296,
+                    rating: 4.6
+                },
+                { 
+                    name: 'Asian Paints', 
+                    items: [
+                        { name: 'Wall Painting', price: 1500, description: 'Professional wall painting services', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Furniture Painting', price: 800, description: 'Painting and polishing of furniture', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Waterproofing', price: 1200, description: 'Waterproofing solutions for roofs and walls', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Texture Coating', price: 1000, description: 'Texture coating for walls and ceilings', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Exterior Painting', price: 2000, description: 'Exterior wall painting and weatherproofing', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Interior Design', price: 2500, description: 'Complete interior design and painting', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Wallpaper Installation', price: 1800, description: 'Installation of designer wallpapers', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' },
+                        { name: 'Stencil Design', price: 1500, description: 'Stencil designs for walls and ceilings', image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=500' }
+                    ],
+                    icon: 'fas fa-paint-roller',
+                    color: 'green',
+                    image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=2058',
+                    phone: '+91 866 248 4444',
+                    email: 'contact@asianpaints.com',
+                    address: 'Governorpet, Vijayawada',
+                    lat: 16.5185,
+                    lng: 80.6197,
+                    rating: 4.7
+                }
+            ]
+        };
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user location from localStorage if available
+            const savedLocation = localStorage.getItem('userLocation');
+            if (savedLocation) {
+                userLocation = JSON.parse(savedLocation);
+                currentLocation.textContent = userLocation.address;
+            }
+            
+            // Setup global search
+            setupGlobalSearch();
+            
+            // Check if user is already logged in
+            checkUserLogin();
+        });
+        
+        // Check if user is already logged in
+        function checkUserLogin() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedVendor = localStorage.getItem('currentVendor');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateAuthButtons();
+                
+                if (savedVendor) {
+                    currentVendor = JSON.parse(savedVendor);
+                    vendorDashboard.classList.remove('hidden');
+                    vendorName.textContent = currentVendor.name;
+                    hideHomePageSections();
+                } else {
+                    customerDashboard.classList.remove('hidden');
+                    userName.textContent = currentUser.name;
+                    loadCustomerDashboardData();
+                    hideHomePageSections();
+                }
+            } else {
+                // Load featured vendors and popular products for homepage
+                loadFeaturedVendors();
+                loadPopularProducts();
+            }
+        }
+        
+        // Hide homepage sections when logged in
+        function hideHomePageSections() {
+            heroSection.classList.add('hidden');
+            locationBanner.classList.add('hidden');
+            categoriesSection.classList.add('hidden');
+            featuredVendorsSection.classList.add('hidden');
+            popularProductsSection.classList.add('hidden');
+        }
+        
+        // Show homepage sections when logged out
+        function showHomePageSections() {
+            heroSection.classList.remove('hidden');
+            locationBanner.classList.remove('hidden');
+            categoriesSection.classList.remove('hidden');
+            featuredVendorsSection.classList.remove('hidden');
+            popularProductsSection.classList.remove('hidden');
+        }
+        
+        // Setup global search functionality
+        function setupGlobalSearch() {
+            globalSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                
+                if (searchTerm.length < 2) {
+                    searchResults.classList.remove('active');
+                    return;
+                }
+                
+                // Search across all products
+                let results = [];
+                
+                for (const category in vijayawadaVendors) {
+                    vijayawadaVendors[category].forEach(vendor => {
+                        vendor.items.forEach(item => {
+                            if (
+                                item.name.toLowerCase().includes(searchTerm) || 
+                                item.description.toLowerCase().includes(searchTerm) ||
+                                vendor.name.toLowerCase().includes(searchTerm)
+                            ) {
+                                results.push({
+                                    ...item,
+                                    vendor: vendor,
+                                    category: category
+                                });
+                            }
+                        });
+                    });
+                }
+                
+                // Display search results
+                displaySearchResults(results);
+            });
+            
+            // Hide search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!globalSearch.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.remove('active');
+                }
+            });
+        }
+        
+        // Display search results
+        function displaySearchResults(results) {
+            searchResults.innerHTML = '';
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">No products found</div>';
+            } else {
+                results.slice(0, 8).forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.onclick = () => {
+                        // Navigate to the category and show the product
+                        showCategory(result.category);
+                        searchResults.classList.remove('active');
+                        globalSearch.value = '';
+                    };
+                    
+                    resultItem.innerHTML = `
+                        <img src="${result.image}" alt="${result.name}" class="search-result-image">
+                        <div class="search-result-info">
+                            <div class="search-result-name">${result.name}</div>
+                            <div class="search-result-vendor">${result.vendor.name}</div>
+                        </div>
+                        <div class="search-result-price">₹${result.price}</div>
+                    `;
+                    
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            searchResults.classList.add('active');
+        }
+        
+        // Load featured vendors on the homepage
+        function loadFeaturedVendors() {
+            featuredVendors.innerHTML = '';
+            
+            // Get a mix of vendors from different categories
+            const featured = [
+                vijayawadaVendors.food[0],
+                vijayawadaVendors.grocery[0],
+                vijayawadaVendors.books[0],
+                vijayawadaVendors.services[0]
+            ];
+            
+            featured.forEach(vendor => {
+                // Calculate distance and delivery time
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    vendor.lat, vendor.lng
+                );
+                
+                const deliveryTime = `${Math.ceil(distance * 3)} mins`;
+                
+                const vendorHTML = `
+                    <div class="vendor-card">
+                        <img src="${vendor.image}" alt="${vendor.name}" class="vendor-image">
+                        <div class="vendor-info">
+                            <h3 class="vendor-name">${vendor.name}</h3>
+                            <p class="vendor-address">
+                                <i class="fas fa-map-marker-alt mr-1"></i> ${vendor.address}
+                            </p>
+                            <div class="vendor-meta">
+                                <div class="vendor-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>${vendor.rating}</span>
+                                </div>
+                                <span class="delivery-time">${deliveryTime}</span>
+                            </div>
+                            <button onclick="showLoginPrompt()" class="view-vendor-btn">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+                featuredVendors.innerHTML += vendorHTML;
+            });
+        }
+        
+        // Load popular products on the homepage
+        function loadPopularProducts() {
+            popularProducts.innerHTML = '';
+            
+            // Get popular products from different categories
+            const popularProductsList = [
+                vijayawadaVendors.food[0].items[0], // Veg Biryani from Hotel Green Park
+                vijayawadaVendors.grocery[0].items[0], // Organic Fruits from More Supermarket
+                vijayawadaVendors.books[0].items[0], // Academic Books from Sri Book Depot
+                vijayawadaVendors.services[0].items[0], // House Cleaning from Urban Company
+                vijayawadaVendors.food[1].items[1], // Chicken 65 from Vaibhav Restaurant
+                vijayawadaVendors.grocery[1].items[1], // Cooking Oil from Reliance Fresh
+                vijayawadaVendors.books[1].items[1], // Non-Fiction from Higginbothams
+                vijayawadaVendors.services[1].items[1] // Pipe Installation from Mr. Right
+            ];
+            
+            // Add vendor information to each product
+            const productsWithVendors = [
+                { ...popularProductsList[0], vendor: vijayawadaVendors.food[0] },
+                { ...popularProductsList[1], vendor: vijayawadaVendors.grocery[0] },
+                { ...popularProductsList[2], vendor: vijayawadaVendors.books[0] },
+                { ...popularProductsList[3], vendor: vijayawadaVendors.services[0] },
+                { ...popularProductsList[4], vendor: vijayawadaVendors.food[1] },
+                { ...popularProductsList[5], vendor: vijayawadaVendors.grocery[1] },
+                { ...popularProductsList[6], vendor: vijayawadaVendors.books[1] },
+                { ...popularProductsList[7], vendor: vijayawadaVendors.services[1] }
+            ];
+            
+            productsWithVendors.forEach(product => {
+                // Calculate distance and delivery time
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    product.vendor.lat, product.vendor.lng
+                );
+                
+                const deliveryTime = `${Math.ceil(distance * 3)} mins`;
+                
+                const productHTML = `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-description">${product.description}</p>
+                            <div class="product-price">₹${product.price}</div>
+                            <div class="product-vendor">
+                                <i class="fas fa-store mr-1"></i> ${product.vendor.name}
+                            </div>
+                            <button onclick="showLoginPrompt()" class="add-to-cart-btn">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                popularProducts.innerHTML += productHTML;
+            });
+        }
+        
+        // Load customer dashboard data
+        function loadCustomerDashboardData() {
+            // Load featured vendors for customer dashboard
+            customerFeaturedVendors.innerHTML = '';
+            
+            // Get a mix of vendors from different categories
+            const featured = [
+                vijayawadaVendors.food[0],
+                vijayawadaVendors.grocery[0],
+                vijayawadaVendors.books[0],
+                vijayawadaVendors.services[0]
+            ];
+            
+            featured.forEach(vendor => {
+                // Calculate distance and delivery time
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    vendor.lat, vendor.lng
+                );
+                
+                const deliveryTime = `${Math.ceil(distance * 3)} mins`;
+                
+                const vendorHTML = `
+                    <div class="vendor-card">
+                        <img src="${vendor.image}" alt="${vendor.name}" class="vendor-image">
+                        <div class="vendor-info">
+                            <h3 class="vendor-name">${vendor.name}</h3>
+                            <p class="vendor-address">
+                                <i class="fas fa-map-marker-alt mr-1"></i> ${vendor.address}
+                            </p>
+                            <div class="vendor-meta">
+                                <div class="vendor-rating">
+                                    <i class="fas fa-star"></i>
+                                    <span>${vendor.rating}</span>
+                                </div>
+                                <span class="delivery-time">${deliveryTime}</span>
+                            </div>
+                            <button onclick="showVendorDetails('${vendor.name}', '${vendor.image}', '${vendor.phone}', '${vendor.email}', '${vendor.address}', ${vendor.lat}, ${vendor.lng}, '${vendor.color}', '${vendor.icon}', ${JSON.stringify(vendor.items).replace(/"/g, '&quot;')})" class="view-vendor-btn">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+                customerFeaturedVendors.innerHTML += vendorHTML;
+            });
+            
+            // Load popular products for customer dashboard
+            customerPopularProducts.innerHTML = '';
+            
+            // Get popular products from different categories
+            const popularProductsList = [
+                vijayawadaVendors.food[0].items[0], // Veg Biryani from Hotel Green Park
+                vijayawadaVendors.grocery[0].items[0], // Organic Fruits from More Supermarket
+                vijayawadaVendors.books[0].items[0], // Academic Books from Sri Book Depot
+                vijayawadaVendors.services[0].items[0], // House Cleaning from Urban Company
+                vijayawadaVendors.food[1].items[1], // Chicken 65 from Vaibhav Restaurant
+                vijayawadaVendors.grocery[1].items[1], // Cooking Oil from Reliance Fresh
+                vijayawadaVendors.books[1].items[1], // Non-Fiction from Higginbothams
+                vijayawadaVendors.services[1].items[1] // Pipe Installation from Mr. Right
+            ];
+            
+            // Add vendor information to each product
+            const productsWithVendors = [
+                { ...popularProductsList[0], vendor: vijayawadaVendors.food[0] },
+                { ...popularProductsList[1], vendor: vijayawadaVendors.grocery[0] },
+                { ...popularProductsList[2], vendor: vijayawadaVendors.books[0] },
+                { ...popularProductsList[3], vendor: vijayawadaVendors.services[0] },
+                { ...popularProductsList[4], vendor: vijayawadaVendors.food[1] },
+                { ...popularProductsList[5], vendor: vijayawadaVendors.grocery[1] },
+                { ...popularProductsList[6], vendor: vijayawadaVendors.books[1] },
+                { ...popularProductsList[7], vendor: vijayawadaVendors.services[1] }
+            ];
+            
+            productsWithVendors.forEach(product => {
+                // Calculate distance and delivery time
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    product.vendor.lat, product.vendor.lng
+                );
+                
+                const deliveryTime = `${Math.ceil(distance * 3)} mins`;
+                
+                const productHTML = `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <p class="product-description">${product.description}</p>
+                            <div class="product-price">₹${product.price}</div>
+                            <div class="product-vendor">
+                                <i class="fas fa-store mr-1"></i> ${product.vendor.name}
+                            </div>
+                            <button onclick="addToCart('${product.vendor.name}', '${product.name}', ${product.price}, '${product.image}')" class="add-to-cart-btn">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
+                customerPopularProducts.innerHTML += productHTML;
+            });
+        }
+        
+        // Show login form
+        function showLogin() {
+            authSection.classList.remove('hidden');
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            verificationSection.classList.add('hidden');
+        }
+        
+        // Show signup form
+        function showSignup() {
+            authSection.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            verificationSection.classList.add('hidden');
+        }
+        
+        // Show verification form
+        function showVerification() {
+            authSection.classList.add('hidden');
+            verificationSection.classList.remove('hidden');
+            
+            // Generate a random 6-digit code
+            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            console.log("Verification code (for demo purposes):", verificationCode);
+            
+            // Start countdown for resend button
+            startCountdown();
+            
+            // Clear any previous inputs
+            const inputs = document.querySelectorAll('.verification-input');
+            inputs.forEach(input => input.value = '');
+            inputs[0].focus();
+            
+            // Hide any previous error/success messages
+            verificationError.classList.add('hidden');
+            verificationSuccess.classList.add('hidden');
+        }
+        
+        // Start countdown for resend button
+        function startCountdown() {
+            let countdown = 30;
+            resendButton.disabled = true;
+            countdownElement.textContent = `(0:${countdown < 10 ? '0' : ''}${countdown})`;
+            
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = `(0:${countdown < 10 ? '0' : ''}${countdown})`;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    resendButton.disabled = false;
+                    countdownElement.textContent = '';
+                }
+            }, 1000);
+        }
+        
+        // Move to next input field
+        function moveToNext(input) {
+            if (input.value.length >= input.maxLength) {
+                const next = input.nextElementSibling;
+                if (next && next.classList.contains('verification-input')) {
+                    next.focus();
+                }
+            }
+        }
+        
+        // Resend verification code
+        function resendCode() {
+            // Generate a new random 6-digit code
+            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+            console.log("New verification code (for demo purposes):", verificationCode);
+            
+            // Start countdown again
+            startCountdown();
+            
+            // Clear input fields and focus on first one
+            const inputs = document.querySelectorAll('.verification-input');
+            inputs.forEach(input => input.value = '');
+            inputs[0].focus();
+            
+            // Hide any previous error message
+            verificationError.classList.add('hidden');
+        }
+        
+        // Verify the email
+        function verifyEmail() {
+            // Get the entered code
+            const inputs = document.querySelectorAll('.verification-input');
+            let enteredCode = '';
+            inputs.forEach(input => enteredCode += input.value);
+            
+            // Show loading state
+            verificationSuccess.classList.remove('hidden');
+            
+            // Simulate verification process
+            setTimeout(() => {
+                if (enteredCode === verificationCode) {
+                    // Success - move to role selection
+                    verificationSection.classList.add('hidden');
+                    roleSection.classList.remove('hidden');
+                } else {
+                    // Show error
+                    verificationError.classList.remove('hidden');
+                    verificationSuccess.classList.add('hidden');
+                }
+            }, 1500);
+        }
+        
+        // Login function
+        function login() {
+            // Get form values
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Simulate login process
+            if (email && password) {
+                // Set current user
+                currentUser = {
+                    name: email.split('@')[0],
+                    email: email
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Update UI
+                authSection.classList.add('hidden');
+                roleSection.classList.remove('hidden');
+                
+                // Update navigation
+                updateAuthButtons();
+            } else {
+                alert('Please enter email and password');
+            }
+        }
+        
+        // Signup function
+        function signup() {
+            // Validate form
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (!email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Show verification screen
+            showVerification();
+        }
+        
+        // Logout function
+        function logout() {
+            // Clear localStorage
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentVendor');
+            
+            // Reset UI to login screen
+            authSection.classList.remove('hidden');
+            roleSection.classList.add('hidden');
+            customerDashboard.classList.add('hidden');
+            vendorDashboard.classList.add('hidden');
+            categoryContent.classList.add('hidden');
+            verificationSection.classList.add('hidden');
+            
+            // Show homepage sections
+            showHomePageSections();
+            
+            // Update navigation
+            authButtons.innerHTML = `
+                <button onclick="showLoginModal()" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium shadow-md hover:bg-gray-100">Login</button>
+            `;
+            
+            // Show login form by default
+            showLogin();
+            
+            // Clear any intervals
+            clearInterval(countdownInterval);
+            
+            // Reset user data
+            currentUser = null;
+            currentVendor = null;
+            vendorLocation = null;
+            
+            // Clear cart
+            cart = [];
+            updateCartUI();
+            
+            // Reload homepage data
+            loadFeaturedVendors();
+            loadPopularProducts();
+        }
+        
+        // Update auth buttons
+        function updateAuthButtons() {
+            authButtons.innerHTML = `
+                <div class="flex items-center space-x-4">
+                    <div class="user-profile">
+                        <div class="user-avatar">${currentUser.name.charAt(0).toUpperCase()}</div>
+                        <span class="text-white">${currentUser.name}</span>
+                    </div>
+                    <button onclick="logout()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium">Logout</button>
+                </div>
+            `;
+        }
+        
+        // Select role (customer or vendor)
+        function selectRole(role) {
+            roleSection.classList.add('hidden');
+            
+            if (role === 'customer') {
+                customerDashboard.classList.remove('hidden');
+                // Update user profile in dashboard
+                userName.textContent = currentUser.name;
+                document.getElementById('user-email').textContent = currentUser.email;
+                document.getElementById('user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                // Load customer dashboard data
+                loadCustomerDashboardData();
+                
+                // Hide homepage sections
+                hideHomePageSections();
+            } else {
+                vendorDashboard.classList.remove('hidden');
+                currentVendor = {
+                    name: currentUser.name,
+                    email: currentUser.email,
+                    category: '',
+                    location: null,
+                    items: []
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('currentVendor', JSON.stringify(currentVendor));
+                
+                // Update vendor name in dashboard
+                vendorName.textContent = currentVendor.name;
+                
+                // Hide homepage sections
+                hideHomePageSections();
+            }
+        }
+        
+        // Select vendor category
+        function selectVendorCategory(category) {
+            // Remove previous selection
+            document.querySelectorAll('.vendor-category-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked card
+            event.currentTarget.classList.add('selected');
+            
+            // Update current vendor category
+            if (currentVendor) {
+                currentVendor.category = category;
+                
+                // Save to localStorage
+                localStorage.setItem('currentVendor', JSON.stringify(currentVendor));
+                
+                // Show success message
+                alert(`You have selected the ${category} category. Now you can add your business location and items.`);
+            }
+        }
+        
+        // Show category items
+        function showCategory(category) {
+            customerDashboard.classList.add('hidden');
+            categoryContent.classList.remove('hidden');
+            
+            // Set active category
+            activeFilters.category = category;
+            activeFilters.vendors = [];
+            
+            // Set category title
+            switch(category) {
+                case 'food':
+                    categoryTitle.textContent = 'Food Delivery';
+                    break;
+                case 'grocery':
+                    categoryTitle.textContent = 'Grocery Stores';
+                    break;
+                case 'books':
+                    categoryTitle.textContent = 'Bookstores';
+                    break;
+                case 'services':
+                    categoryTitle.textContent = 'Household Services';
+                    break;
+            }
+            
+            // Reset search
+            currentSearchTerm = '';
+            categorySearch.value = '';
+            
+            // Render vendor filters
+            renderVendorFilters(category);
+            
+            // Render products
+            renderProducts();
+        }
+        
+        // Search products within a category
+        function searchCategoryProducts() {
+            currentSearchTerm = categorySearch.value.toLowerCase().trim();
+            renderProducts();
+        }
+        
+        // Render vendor filters
+        function renderVendorFilters(category) {
+            vendorFilters.innerHTML = '';
+            
+            // Add "All Vendors" filter
+            const allFilter = document.createElement('div');
+            allFilter.className = 'filter-option active';
+            allFilter.textContent = 'All Vendors';
+            allFilter.onclick = () => toggleVendorFilter('all');
+            vendorFilters.appendChild(allFilter);
+            
+            // Add vendor filters
+            vijayawadaVendors[category].forEach(vendor => {
+                const filter = document.createElement('div');
+                filter.className = 'filter-option';
+                filter.textContent = vendor.name;
+                filter.onclick = () => toggleVendorFilter(vendor.name);
+                vendorFilters.appendChild(filter);
+            });
+        }
+        
+        // Toggle vendor filter
+        function toggleVendorFilter(vendorName) {
+            if (vendorName === 'all') {
+                // Select all vendors
+                activeFilters.vendors = [];
+                
+                // Update UI
+                document.querySelectorAll('.filter-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                document.querySelector('.filter-option').classList.add('active');
+            } else {
+                // Toggle vendor filter
+                const index = activeFilters.vendors.indexOf(vendorName);
+                if (index === -1) {
+                    activeFilters.vendors.push(vendorName);
+                } else {
+                    activeFilters.vendors.splice(index, 1);
+                }
+                
+                // Update UI
+                document.querySelectorAll('.filter-option').forEach(option => {
+                    option.classList.remove('active');
+                });
+                
+                if (activeFilters.vendors.length === 0) {
+                    document.querySelector('.filter-option').classList.add('active');
+                } else {
+                    activeFilters.vendors.forEach(vendor => {
+                        const option = Array.from(document.querySelectorAll('.filter-option')).find(opt => opt.textContent === vendor);
+                        if (option) option.classList.add('active');
+                    });
+                }
+            }
+            
+            // Re-render products
+            renderProducts();
+        }
+        
+        // Render products based on active filters and search term
+        function renderProducts() {
+            categoryProducts.innerHTML = '';
+            
+            // Get products based on active category and vendor filters
+            let products = [];
+            
+            if (activeFilters.vendors.length === 0) {
+                // Show all products from all vendors in the category
+                vijayawadaVendors[activeFilters.category].forEach(vendor => {
+                    vendor.items.forEach(item => {
+                        products.push({
+                            ...item,
+                            vendor: vendor
+                        });
+                    });
+                });
+            } else {
+                // Show products only from selected vendors
+                activeFilters.vendors.forEach(vendorName => {
+                    const vendor = vijayawadaVendors[activeFilters.category].find(v => v.name === vendorName);
+                    if (vendor) {
+                        vendor.items.forEach(item => {
+                            products.push({
+                                ...item,
+                                vendor: vendor
+                            });
+                        });
+                    }
+                });
+            }
+            
+            // Apply search filter
+            if (currentSearchTerm) {
+                products = products.filter(product => {
+                    const productName = product.name.toLowerCase();
+                    const productDescription = product.description.toLowerCase();
+                    const vendorName = product.vendor.name.toLowerCase();
+                    
+                    return productName.includes(currentSearchTerm) || 
+                           productDescription.includes(currentSearchTerm) || 
+                           vendorName.includes(currentSearchTerm);
+                });
+            }
+            
+            // Render products
+            if (products.length === 0) {
+                categoryProducts.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-search text-gray-300 text-4xl mb-4"></i>
+                        <p class="text-gray-500">No products found matching your search.</p>
+                    </div>
+                `;
+            } else {
+                products.forEach(product => {
+                    // Calculate distance and delivery time
+                    const distance = calculateDistance(
+                        userLocation.lat, userLocation.lng,
+                        product.vendor.lat, product.vendor.lng
+                    );
+                    
+                    const deliveryTime = `${Math.ceil(distance * 3)} mins`;
+                    
+                    const productHTML = `
+                        <div class="product-card">
+                            <img src="${product.image}" alt="${product.name}" class="product-image">
+                            <div class="product-info">
+                                <h3 class="product-name">${product.name}</h3>
+                                <p class="product-description">${product.description}</p>
+                                <div class="product-price">₹${product.price}</div>
+                                <div class="product-vendor">
+                                    <i class="fas fa-store mr-1"></i> ${product.vendor.name}
+                                </div>
+                                <div class="flex justify-between items-center mt-2">
+                                    <span class="text-sm text-gray-600"><i class="fas fa-clock mr-1"></i> ${deliveryTime}</span>
+                                    <button onclick="addToCart('${product.vendor.name}', '${product.name}', ${product.price}, '${product.image}')" class="add-to-cart-btn">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    categoryProducts.innerHTML += productHTML;
+                });
+            }
+        }
+        
+        // Hide category and return to dashboard
+        function hideCategory() {
+            categoryContent.classList.add('hidden');
+            customerDashboard.classList.remove('hidden');
+        }
+        
+        // Calculate distance between two points using Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the earth in km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = R * c; // Distance in km
+            return distance;
+        }
+        
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
+        }
+        
+        // Modal functions
+        function showLoginModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+        
+        function showSignupModal() {
+            document.getElementById('signup-modal').style.display = 'flex';
+        }
+        
+        function showLocationModal() {
+            document.getElementById('location-modal').style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function switchToSignup() {
+            closeModal('login-modal');
+            showSignupModal();
+        }
+        
+        function switchToLogin() {
+            closeModal('signup-modal');
+            showLoginModal();
+        }
+        
+        function modalLogin() {
+            const email = document.getElementById('modal-email').value;
+            const password = document.getElementById('modal-password').value;
+            
+            if (email && password) {
+                // Set current user
+                currentUser = {
+                    name: email.split('@')[0],
+                    email: email
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Close modal
+                closeModal('login-modal');
+                
+                // Show role selection
+                authSection.classList.add('hidden');
+                roleSection.classList.remove('hidden');
+                
+                // Update navigation
+                updateAuthButtons();
+            } else {
+                alert('Please enter email and password');
+            }
+        }
+        
+        function modalSignup() {
+            const email = document.getElementById('modal-signup-email').value;
+            const password = document.getElementById('modal-signup-password').value;
+            const confirmPassword = document.getElementById('modal-confirm-password').value;
+            
+            if (!email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Close modal
+            closeModal('signup-modal');
+            
+            // Show verification screen
+            showVerification();
+        }
+        
+        function showAddItemModal() {
+            document.getElementById('add-item-modal').style.display = 'flex';
+        }
+        
+        function addItem() {
+            const name = document.getElementById('item-name').value;
+            const price = document.getElementById('item-price').value;
+            const description = document.getElementById('item-description').value;
+            const image = document.getElementById('item-image').value;
+            
+            if (name && price && description) {
+                // Add item to vendor's items
+                if (currentVendor) {
+                    currentVendor.items.push({
+                        name: name,
+                        price: parseFloat(price),
+                        description: description,
+                        image: image || 'https://via.placeholder.com/150'
+                    });
+                    
+                    // Save to localStorage
+                    localStorage.setItem('currentVendor', JSON.stringify(currentVendor));
+                    
+                    // Close modal
+                    closeModal('add-item-modal');
+                    
+                    // Clear form
+                    document.getElementById('item-name').value = '';
+                    document.getElementById('item-price').value = '';
+                    document.getElementById('item-description').value = '';
+                    document.getElementById('item-image').value = '';
+                    
+                    alert('Item added successfully!');
+                }
+            } else {
+                alert('Please fill in all required fields');
+            }
+        }
+        
+        function showVendorDetails(name, image, phone, email, address, lat, lng, color, icon, items) {
+            // Set modal content
+            document.getElementById('vendor-details-title').textContent = name;
+            document.getElementById('vendor-details-image').src = image;
+            document.getElementById('vendor-details-phone').textContent = phone;
+            document.getElementById('vendor-details-email').textContent = email;
+            document.getElementById('vendor-details-address').textContent = address;
+            
+            // Calculate distance and delivery time
+            const distance = calculateDistance(
+                userLocation.lat, userLocation.lng,
+                lat, lng
+            );
+            document.getElementById('vendor-details-distance').textContent = `${distance.toFixed(1)} km`;
+            document.getElementById('vendor-details-delivery-time').textContent = `${Math.ceil(distance * 3)} mins`;
+            
+            // Set products
+            const productsContainer = document.getElementById('vendor-details-products');
+            productsContainer.innerHTML = '';
+            
+            const itemsArray = JSON.parse(items.replace(/&quot;/g, '"'));
+            itemsArray.forEach(item => {
+                const productHTML = `
+                    <div class="vendor-product-card">
+                        <img src="${item.image}" alt="${item.name}" class="vendor-product-image">
+                        <div class="vendor-product-name">${item.name}</div>
+                        <div class="vendor-product-price">₹${item.price}</div>
+                        <button onclick="addToCart('${name}', '${item.name}', ${item.price}, '${item.image}')" class="vendor-add-to-cart-btn">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+                productsContainer.innerHTML += productHTML;
+            });
+            
+            // Show modal
+            document.getElementById('vendor-details-modal').style.display = 'flex';
+            
+            // Initialize map
+            setTimeout(() => {
+                if (vendorDetailsMap) {
+                    vendorDetailsMap.remove();
+                }
+                
+                vendorDetailsMap = L.map('vendor-details-map').setView([lat, lng], 15);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(vendorDetailsMap);
+                
+                // Add vendor marker
+                L.marker([lat, lng]).addTo(vendorDetailsMap)
+                    .bindPopup(`<b>${name}</b><br>${address}`)
+                    .openPopup();
+                
+                // Add user marker
+                L.marker([userLocation.lat, userLocation.lng], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(vendorDetailsMap)
+                    .bindPopup('<b>Your Location</b>');
+                
+                // Draw a line between user and vendor
+                L.polyline([
+                    [userLocation.lat, userLocation.lng],
+                    [lat, lng]
+                ], {color: '#4F46E5'}).addTo(vendorDetailsMap);
+            }, 100);
+        }
+        
+        // Cart functions
+        function toggleCart() {
+            cartSidebar.classList.toggle('open');
+            updateCartUI();
+        }
+        
+        function addToCart(vendorName, itemName, price, image) {
+            // Check if user is logged in
+            if (!currentUser) {
+                showLoginPrompt();
+                return;
+            }
+            
+            // Check if item is already in cart
+            const existingItemIndex = cart.findIndex(item => 
+                item.vendorName === vendorName && item.name === itemName
+            );
+            
+            if (existingItemIndex !== -1) {
+                // Increment quantity if item already exists
+                cart[existingItemIndex].quantity += 1;
+            } else {
+                // Add new item to cart
+                cart.push({
+                    vendorName: vendorName,
+                    name: itemName,
+                    price: price,
+                    image: image,
+                    quantity: 1
+                });
+            }
+            
+            // Update cart UI
+            updateCartUI();
+            
+            // Show cart
+            cartSidebar.classList.add('open');
+        }
+        
+        function updateCartUI() {
+            // Update cart count
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Update cart items
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-3"></i>
+                        <p>Your cart is empty</p>
+                    </div>
+                `;
+            } else {
+                cartItems.innerHTML = '';
+                
+                // Group items by vendor
+                const groupedItems = {};
+                cart.forEach(item => {
+                    if (!groupedItems[item.vendorName]) {
+                        groupedItems[item.vendorName] = [];
+                    }
+                    groupedItems[item.vendorName].push(item);
+                });
+                
+                // Render grouped items
+                for (const vendorName in groupedItems) {
+                    const vendorItems = groupedItems[vendorName];
+                    
+                    // Add vendor header
+                    const vendorHeader = document.createElement('div');
+                    vendorHeader.className = 'font-semibold text-gray-700 px-4 py-2 bg-gray-100';
+                    vendorHeader.textContent = vendorName;
+                    cartItems.appendChild(vendorHeader);
+                    
+                    // Add vendor items
+                    vendorItems.forEach(item => {
+                        const cartItem = document.createElement('div');
+                        cartItem.className = 'cart-item';
+                        cartItem.innerHTML = `
+                            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                            <div class="cart-item-details">
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">₹${item.price}</div>
+                            </div>
+                            <div class="cart-item-quantity">
+                                <div class="quantity-btn" onclick="decreaseQuantity('${item.vendorName}', '${item.name}')">
+                                    <i class="fas fa-minus"></i>
+                                </div>
+                                <span>${item.quantity}</span>
+                                <div class="quantity-btn" onclick="increaseQuantity('${item.vendorName}', '${item.name}')">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        `;
+                        cartItems.appendChild(cartItem);
+                    });
+                }
+            }
+            
+            // Update cart total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = `₹${total.toFixed(2)}`;
+        }
+        
+        function increaseQuantity(vendorName, itemName) {
+            const itemIndex = cart.findIndex(item => 
+                item.vendorName === vendorName && item.name === itemName
+            );
+            
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity += 1;
+                updateCartUI();
+            }
+        }
+        
+        function decreaseQuantity(vendorName, itemName) {
+            const itemIndex = cart.findIndex(item => 
+                item.vendorName === vendorName && item.name === itemName
+            );
+            
+            if (itemIndex !== -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity -= 1;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+                updateCartUI();
+            }
+        }
+        
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty');
+                return;
+            }
+            
+            // Check if user is logged in
+            if (!currentUser) {
+                showLoginPrompt();
+                return;
+            }
+            
+            // Calculate total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Show confirmation
+            const confirmed = confirm(`Total amount: ₹${total.toFixed(2)}\n\nProceed to checkout?`);
+            
+            if (confirmed) {
+                // Clear cart
+                cart = [];
+                updateCartUI();
+                
+                // Close cart sidebar
+                cartSidebar.classList.remove('open');
+                
+                // Show success message
+                alert('Order placed successfully!');
+            }
+        }
+        
+        // Location functions
+        function selectLocation(location) {
+            document.getElementById('location-input').value = location;
+        }
+        
+        function saveLocation() {
+            const locationInput = document.getElementById('location-input').value;
+            
+            if (locationInput) {
+                // For demo purposes, we'll use predefined coordinates
+                // In a real app, you would geocode the address to get lat/lng
+                let lat, lng;
+                
+                switch(locationInput) {
+                    case 'Benz Circle, Vijayawada':
+                        lat = 16.5062;
+                        lng = 80.6480;
+                        break;
+                    case 'M G Road, Vijayawada':
+                        lat = 16.5153;
+                        lng = 80.6309;
+                        break;
+                    case 'Eluru Road, Vijayawada':
+                        lat = 16.5123;
+                        lng = 80.6296;
+                        break;
+                    case 'Governorpet, Vijayawada':
+                        lat = 16.5185;
+                        lng = 80.6197;
+                        break;
+                    default:
+                        // Default to Benz Circle if location not recognized
+                        lat = 16.5062;
+                        lng = 80.6480;
+                }
+                
+                // Update user location
+                userLocation = {
+                    lat: lat,
+                    lng: lng,
+                    address: locationInput
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('userLocation', JSON.stringify(userLocation));
+                
+                // Update UI
+                currentLocation.textContent = locationInput;
+                
+                // Close modal
+                closeModal('location-modal');
+                
+                // Reload featured vendors with new location
+                if (!currentUser) {
+                    loadFeaturedVendors();
+                    loadPopularProducts();
+                } else {
+                    loadCustomerDashboardData();
+                }
+                
+                alert('Location updated successfully!');
+            } else {
+                alert('Please enter or select a location');
+            }
+        }
+        
+        function detectUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            address: 'Current Location'
+                        };
+                        
+                        // Update location input
+                        document.getElementById('user-location').value = `${userLocation.lat.toFixed(6)}, ${userLocation.lng.toFixed(6)}`;
+                        
+                        // Save to localStorage
+                        localStorage.setItem('userLocation', JSON.stringify(userLocation));
+                        
+                        // Show map
+                        const mapContainer = document.getElementById('map');
+                        mapContainer.classList.remove('hidden');
+                        
+                        // Initialize map
+                        if (map) {
+                            map.remove();
+                        }
+                        
+                        map = L.map('map').setView([userLocation.lat, userLocation.lng], 15);
+                        
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+                        
+                        // Add user marker
+                        L.marker([userLocation.lat, userLocation.lng]).addTo(map)
+                            .bindPopup('<b>Your Location</b>')
+                            .openPopup();
+                        
+                        alert('Location detected successfully!');
+                    },
+                    (error) => {
+                        alert('Error detecting location: ' + error.message);
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+        
+        // Set vendor location
+        function setVendorLocation() {
+            const address = document.getElementById('vendor-location').value;
+            
+            if (address) {
+                // For demo purposes, we'll use a fixed location
+                // In a real app, you would geocode the address to get lat/lng
+                vendorLocation = {
+                    lat: 16.5062,
+                    lng: 80.6480,
+                    address: address
+                };
+                
+                // Update current vendor
+                if (currentVendor) {
+                    currentVendor.location = vendorLocation;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('currentVendor', JSON.stringify(currentVendor));
+                }
+                
+                // Show map
+                const mapContainer = document.getElementById('vendor-map');
+                mapContainer.classList.remove('hidden');
+                
+                // Initialize map
+                if (vendorMap) {
+                    vendorMap.remove();
+                }
+                
+                vendorMap = L.map('vendor-map').setView([vendorLocation.lat, vendorLocation.lng], 15);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(vendorMap);
+                
+                // Add vendor marker
+                L.marker([vendorLocation.lat, vendorLocation.lng]).addTo(vendorMap)
+                    .bindPopup(`<b>Your Business Location</b><br>${address}`)
+                    .openPopup();
+                
+                alert('Location set successfully!');
+            } else {
+                alert('Please enter your business address');
+            }
+        }
+        
+        // Login prompt functions
+        function showLoginPrompt() {
+            loginPrompt.style.display = 'flex';
+        }
+        
+        function hideLoginPrompt() {
+            loginPrompt.style.display = 'none';
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+            
+            if (event.target === loginPrompt) {
+                hideLoginPrompt();
+            }
+        }
+    </script>
+</body>
+</html>
